@@ -1186,73 +1186,87 @@
       .intro #nav {
         display: none;
       }
-      .intro .statusbar {
-        background: #17213e;
-        color: #fff;
+      .intro .statusbar,
+      .intro .wrap {
+        background: var(--blue);
+        color: white;
       }
       .intro .wrap {
         padding: 0;
-        background: #17213e;
-        color: white;
-      }
-      .intro .glass:after {
-        background: white;
       }
       .welcome {
-        background: radial-gradient(ellipse at 55% 36%, #303c5e, #17213e 65%);
         min-height: 100%;
-        padding: 28px 26px 42px;
+        display: flex;
+        flex-direction: column;
+        background: var(--blue);
+      }
+      .welcome-top {
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 22px;
+        gap: clamp(28px, 9vh, 80px);
+        padding: 24px 26px 32px;
       }
-      .crest {
-        height: clamp(85px, 23vh, 195px);
-        width: 100%;
-        display: grid;
-        place-items: center;
-        background: repeating-radial-gradient(
-          circle,
-          #bda66c44 0 1px,
-          transparent 1px 14px
-        );
-        mask-image: radial-gradient(
-          ellipse at center,
-          black 25%,
-          transparent 72%
-        );
-      }
-      .crest i {
-        width: 61px;
-        height: 76px;
-        transform: rotate(-18deg);
-        border-radius: 50% 15% 50% 15%;
-        background: repeating-linear-gradient(
-          90deg,
-          #f4da88 0 6px,
-          transparent 6px 10px
-        );
+      .welcome-top .cardbrand {
+        color: white;
+        font-size: 26px;
       }
       .welcome h1 {
-        font-size: 43px;
-        color: #fff;
-        margin: 0 0 10px;
+        margin: 0;
+        color: white;
+        font-size: clamp(38px, 9vw, 48px);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
       }
-      .welcome p {
-        color: #d7deed;
-        font-size: 15px;
-        line-height: 1.5;
+      .welcome h1 span {
+        color: var(--lime);
+      }
+      .signin-panel {
+        padding: 24px 24px max(26px, env(safe-area-inset-bottom));
+        background: white;
+        border-radius: 26px 26px 0 0;
+        color: var(--ink);
+      }
+      .signin-panel h2 {
+        font-size: 24px;
+        margin: 0 0 6px;
+      }
+      .signin-panel p {
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .signin-panel .quiet {
+        margin: 0 0 18px;
+      }
+      .signin-panel .btn,
+      .sheet.auth .btn {
+        color: var(--ink);
+        background: var(--lime);
+      }
+      .signin-panel input:focus-visible,
+      .sheet.auth input:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
       }
       .welcomelink {
-        padding: 12px;
+        display: block;
+        margin: 8px auto 0;
+        padding: 10px;
         background: none;
         border: 0;
-        color: white;
+        color: var(--gold);
         text-decoration: underline;
       }
-      .welcome .light {
-        width: 100%;
+      .sheet.auth::before {
+        background: var(--blue);
+      }
+      .sheet.auth h2 {
+        color: var(--blue);
+      }
+      .sheet.auth .hint {
+        background: #eef0ff;
+        color: var(--ink);
       }
       @media (max-width: 490px) {
         :root {
@@ -1489,38 +1503,6 @@
         background: #eef0ff;
         border-color: #d7dcff;
         color: #263cd3;
-      }
-
-      .intro .statusbar,
-      .intro .wrap,
-      .welcome {
-        background: var(--blue);
-      }
-      .welcome .cardbrand {
-        color: white;
-      }
-      .welcome p {
-        color: white;
-      }
-      .welcome .light {
-        background: var(--lime);
-        color: var(--ink);
-      }
-      .crest {
-        background: repeating-radial-gradient(
-          circle,
-          #fff3 0 1px,
-          transparent 1px 14px
-        );
-      }
-      .crest i {
-        background: repeating-linear-gradient(
-          115deg,
-          var(--lime) 0 8px,
-          transparent 8px 14px
-        );
-        transform: none;
-        border-radius: 0;
       }
     </style>
   </head>
@@ -1947,6 +1929,7 @@
       function dialog(title, body, handler) {
         if (modal.open) modal.close();
         delete modal.dataset.receipt;
+        modal.classList.remove("auth");
         modal.innerHTML =
           '<button class="close" aria-label="Fermer" data-act="close">×</button><h2 id="modalTitle">' +
           title +
@@ -3819,58 +3802,69 @@
           },
         );
       }
-      function enroll(destination = "home") {
-        dialog(
+      function authDialog(title, body, handler) {
+        dialog(title, body, handler);
+        modal.classList.add("auth");
+      }
+      function phoneField() {
+        return field(
+          "Numéro de téléphone (+221)",
+          '<input type="tel" name="phone" autocomplete="tel-national" placeholder="77 123 45 67" required>',
+        );
+      }
+      function enroll(destination) {
+        authDialog(
           "Ton numéro de téléphone",
-          field(
-            "Sénégal (+221)",
-            '<input type="tel" name="phone" inputmode="tel" placeholder="77 123 45 67" required>',
-          ) + submit("Recevoir mon code"),
+          phoneField() + submit("Recevoir mon code"),
+          (f) => verifyPhone(f, destination, $("#err")),
+        );
+      }
+      function verifyPhone(f, destination, error) {
+        const phone = String(f.get("phone"))
+          .replace(/[ ()-]/g, "")
+          .replace(/^\+221/, "");
+        if (!/^7\d{8}$/.test(phone)) {
+          error.textContent =
+            "Saisis un numéro mobile sénégalais à 9 chiffres.";
+          return;
+        }
+        error.textContent = "";
+        authDialog(
+          "Vérifier mon numéro",
+          '<p class="hint">Code de simulation pour le +221 ' +
+            phone +
+            " : <strong>123456</strong>.</p>" +
+            field(
+              "Code à 6 chiffres",
+              '<input name="otp" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>',
+            ) +
+            submit("Vérifier"),
           (f) => {
-            const phone = String(f.get("phone"))
-              .replace(/[ ()-]/g, "")
-              .replace(/^\+221/, "");
-            if (!/^7\d{8}$/.test(phone))
+            if (f.get("otp") !== "123456")
               return ($("#err").textContent =
-                "Saisis un numéro mobile sénégalais à 9 chiffres.");
-            dialog(
-              "Vérifier mon numéro",
-              '<p class="hint">Code de simulation pour le +221 ' +
-                phone +
-                " : <strong>123456</strong>.</p>" +
-                field(
-                  "Code à 6 chiffres",
-                  '<input name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>',
-                ) +
-                submit("Vérifier"),
+                "Code incorrect. Utilise le code affiché.");
+            if (s.phones[phone] !== undefined) {
+              s.user = s.phones[phone];
+              flipped = false;
+              s.visited = true;
+              return finish("Compte retrouvé.", destination);
+            }
+            authDialog(
+              "Créer mon profil",
+              field(
+                "Prénom et nom",
+                '<input name="name" autocomplete="name" required maxlength="48">',
+              ) + submit("Ouvrir mon compte"),
               (f) => {
-                if (f.get("otp") !== "123456")
+                const name = String(f.get("name")).trim();
+                if (!/^[\p{L}][\p{L} .’'-]{1,47}$/u.test(name))
                   return ($("#err").textContent =
-                    "Code incorrect. Utilise le code affiché.");
-                if (s.phones[phone] !== undefined) {
-                  s.user = s.phones[phone];
-                  flipped = false;
-                  s.visited = true;
-                  return finish("Compte retrouvé.", destination);
-                }
-                dialog(
-                  "Créer mon profil",
-                  field(
-                    "Prénom et nom",
-                    '<input name="name" autocomplete="name" required maxlength="48">',
-                  ) + submit("Ouvrir mon compte"),
-                  (f) => {
-                    const name = String(f.get("name")).trim();
-                    if (!/^[\p{L}][\p{L} .’'-]{1,47}$/u.test(name))
-                      return ($("#err").textContent =
-                        "Vérifie le prénom et le nom.");
-                    s.user = people.push(name) - 1;
-                    s.phones[phone] = s.user;
-                    flipped = false;
-                    s.visited = true;
-                    finish("Ton compte est prêt.", destination);
-                  },
-                );
+                    "Vérifie le prénom et le nom.");
+                s.user = people.push(name) - 1;
+                s.phones[phone] = s.user;
+                flipped = false;
+                s.visited = true;
+                finish("Ton compte est prêt.", destination);
               },
             );
           },
@@ -3878,8 +3872,14 @@
       }
       function welcome() {
         return (
-          '<section class="welcome"><div class="cardbrand"><i></i>bokk</div><div class="crest" aria-hidden="true"><i></i></div><div><h1>Ton argent,<br>tes tontines.</h1><p>Rejoins ta réunion, cotise et retrouve tes tours au même endroit.</p></div><div class="stack">' +
-          act("Créer mon compte", "enroll", "light") +
+          '<section class="welcome"><div class="welcome-top"><div class="cardbrand"><i></i>bokk</div>' +
+          '<h1>Ton argent,<br><span>tes tontines.</span></h1></div><div class="signin-panel">' +
+          '<h2>Connexion</h2><p class="quiet">Entre ton numéro pour te connecter ou créer ton compte.</p>' +
+          '<form id="signin">' +
+          phoneField() +
+          '<p class="err" role="alert" id="signin-error"></p>' +
+          submit("Recevoir mon code") +
+          "</form>" +
           act("Explorer avec Awa", "demo", "welcomelink") +
           "</div></section>"
         );
@@ -4164,9 +4164,6 @@
             flipped = false;
             finish("Profil de démonstration", "home");
             break;
-          case "enroll":
-            enroll();
-            break;
           case "flip":
             flipped = !flipped;
             render();
@@ -4367,6 +4364,11 @@
               : threadList(e.target.value);
       });
       main.addEventListener("submit", (e) => {
+        if (e.target.id === "signin") {
+          e.preventDefault();
+          verifyPhone(new FormData(e.target), "home", $("#signin-error"));
+          return;
+        }
         const t = e.target.dataset.thread;
         if (!t || !chatAccess(t)) return;
         e.preventDefault();
