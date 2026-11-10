@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#ffffff" />
-    <title>Njangi · Mon espace</title>
+    <title>Bokk · Mon espace</title>
     <style>
       :root {
         --ink: #151b32;
@@ -1345,6 +1345,183 @@
       .stack {
         margin-top: 10px;
       }
+
+      :root {
+        --ink: #0e0f1a;
+        --navy: #0e0f1a;
+        --gold: #263cd3;
+        --line: #e0e3ee;
+        --cream: #eef0ff;
+        --blue: #2f4bff;
+        --lime: #c8f560;
+        --muted: #56596a;
+      }
+      html {
+        background-color: #f4f5fa;
+        background-image: radial-gradient(#2f4bff26 0.8px, transparent 0.9px);
+        background-size: 24px 24px;
+      }
+      .glass,
+      header,
+      .statusbar,
+      main {
+        background: #f4f5fa;
+      }
+      .avatar {
+        background: #0e0f1a;
+        color: white;
+      }
+      .face,
+      .reverse,
+      .feature {
+        background: var(--blue);
+        border-color: transparent;
+        box-shadow: 0 7px 15px #2f4bff21;
+      }
+      .balance::after,
+      .feature::after {
+        top: -16px;
+        right: -32px;
+        bottom: auto;
+        width: 123px;
+        height: 92px;
+        background: repeating-linear-gradient(
+          120deg,
+          #fff2 0 12px,
+          transparent 12px 21px
+        );
+        border-radius: 0;
+        transform: skewX(-8deg);
+        mask-image: linear-gradient(225deg, #000 45%, transparent 85%);
+        pointer-events: none;
+      }
+      .balance .cardbrand {
+        color: #fff;
+        font-weight: 800;
+        letter-spacing: -1px;
+        gap: 8px;
+      }
+      .cardbrand i {
+        background: repeating-linear-gradient(
+          115deg,
+          var(--lime) 0 4px,
+          transparent 4px 7px
+        );
+        border-radius: 0;
+        transform: none;
+      }
+      .sum,
+      .sum span,
+      .cardtop > svg {
+        color: var(--lime);
+      }
+      .balance-label,
+      .balance-foot,
+      .balance-foot b,
+      .duedate small {
+        color: #fff;
+      }
+      .quickbtn i,
+      .minitop i,
+      .nav.on,
+      .sectiontop .link {
+        color: var(--blue);
+      }
+      .quickbtn i {
+        background: white;
+        border-color: #dce0f3;
+        border-radius: 14px;
+      }
+      .central i {
+        background: var(--lime);
+        color: var(--ink);
+        box-shadow: none;
+      }
+      .nav.on svg {
+        fill: #2f4bff0d;
+      }
+      .mini,
+      .mini:nth-child(3n),
+      .mini:nth-child(3n + 2) {
+        background: white;
+        border-color: #dfe2ee;
+        color: var(--ink);
+      }
+      .mini:nth-child(3n + 2) {
+        background: #edf0ff;
+      }
+      .minitop > span {
+        background: #f4f5fa;
+        border: 0;
+        color: #41445a;
+      }
+      .rail i,
+      #alerts b {
+        background: var(--blue);
+        color: white;
+      }
+      .task {
+        background: white;
+        padding-inline: 8px;
+        border-color: #eceef5;
+      }
+      .taskicon {
+        color: var(--blue);
+      }
+      .tail {
+        background: #f4f5fa;
+        color: var(--ink);
+      }
+      .strip {
+        scrollbar-color: #d6dbef transparent;
+      }
+      .nav.central svg {
+        fill: none;
+      }
+      .btn,
+      .segments .selected {
+        background: var(--blue);
+        color: white;
+      }
+      .pill,
+      .ghost,
+      .icon {
+        background: #eef0ff;
+        border-color: #d7dcff;
+        color: #263cd3;
+      }
+
+      .intro .statusbar,
+      .intro .wrap,
+      .welcome {
+        background: var(--blue);
+      }
+      .welcome .cardbrand {
+        color: white;
+      }
+      .welcome p {
+        color: white;
+      }
+      .welcome .light {
+        background: var(--lime);
+        color: var(--ink);
+      }
+      .crest {
+        background: repeating-radial-gradient(
+          circle,
+          #fff3 0 1px,
+          transparent 1px 14px
+        );
+      }
+      .crest i {
+        background: repeating-linear-gradient(
+          115deg,
+          var(--lime) 0 8px,
+          transparent 8px 14px
+        );
+        transform: none;
+        border-radius: 0;
+      }
     </style>
   </head>
   <body>
@@ -2084,7 +2261,7 @@
             .filter(({ g, slot }) => slot < s.orders[g].length)
             .sort((a, b) => a.date - b.date);
         const face =
-          '<button class="balance face" data-act="flip"><span class="sr">Voir mes prochaines échéances.</span><div class="cardtop"><span class="cardbrand"><i></i>njangi</span>' +
+          '<button class="balance face" data-act="flip"><span class="sr">Voir mes prochaines échéances.</span><div class="cardtop"><span class="cardbrand"><i></i>bokk</span>' +
           icon("vote") +
           '</div><div class="balance-label">Total épargné</div><div class="sum">' +
           (wallet() + vaultAccount().balance).toLocaleString("fr-FR") +
@@ -2386,7 +2563,7 @@
                 : "Comment as-tu envoyé la somme ?",
               '<select name="method">' +
                 (x.direct
-                  ? "<option>Compte Njangi</option>"
+                  ? "<option>Compte Bokk</option>"
                   : "<option>Espèces</option>") +
                 "<option>Wave</option><option>Orange Money</option></select>",
             ) +
@@ -2414,7 +2591,7 @@
               showReceipt(exists);
               return;
             }
-            if (f.get("method") === "Compte Njangi") {
+            if (f.get("method") === "Compte Bokk") {
               if (wallet() < x.fee)
                 return ($("#err").textContent =
                   "Solde insuffisant. Choisis Wave ou Orange Money.");
@@ -2461,7 +2638,10 @@
             fact("Séance", when(p.g, p.slot || 0)) +
             fact("Payé par", people[p.by]) +
             fact("Cotisation de", people[p.forId]) +
-            fact("Moyen", h(p.method)) +
+            fact(
+              "Moyen",
+              h(p.method === "Compte Njangi" ? "Compte Bokk" : p.method),
+            ) +
             (x.direct ? "" : fact("Destinataire", people[p.receiver])) +
             fact("Référence", p.id.slice(0, 8).toUpperCase()) +
             '</div><p class="hint">' +
@@ -3300,7 +3480,7 @@
             ) +
             field(
               "Mode de cotisation",
-              '<select name="mode"><option value="direct">Paiement sur Njangi</option><option value="track">Suivi déclaratif</option></select>',
+              '<select name="mode"><option value="direct">Paiement sur Bokk</option><option value="track">Suivi déclaratif</option></select>',
             ) +
             submit("Vérifier la reprise"),
           (f) => {
@@ -3356,7 +3536,7 @@
                 money(fee) +
                 " × " +
                 past +
-                " tours. Cette estimation suppose que chaque tour a été intégralement cotisé. Le solde sur Njangi commence à zéro.</p>" +
+                " tours. Cette estimation suppose que chaque tour a été intégralement cotisé. Le solde sur Bokk commence à zéro.</p>" +
                 submit("Reprendre et inviter"),
               () => {
                 const g = uid();
@@ -3391,7 +3571,7 @@
             ) +
             field(
               "Mode de cotisation",
-              '<select name="mode"><option value="direct">Paiement sur Njangi</option><option value="track">Suivi déclaratif</option></select>',
+              '<select name="mode"><option value="direct">Paiement sur Bokk</option><option value="track">Suivi déclaratif</option></select>',
             ) +
             submit("Choisir les membres"),
           (f) => {
@@ -3493,7 +3673,7 @@
             fact("Bénéficiaire", h(people[s.user])) +
             fact(
               "Destination",
-              x.direct ? "Mon compte Njangi" : "Remise hors plateforme",
+              x.direct ? "Mon compte Bokk" : "Remise hors plateforme",
             ) +
             "</div>" +
             submit(x.direct ? "Créditer mon compte" : "J’ai reçu la somme"),
@@ -3698,7 +3878,7 @@
       }
       function welcome() {
         return (
-          '<section class="welcome"><div class="cardbrand"><i></i>njangi</div><div class="crest" aria-hidden="true"><i></i></div><div><h1>Ton argent,<br>tes tontines.</h1><p>Rejoins ta réunion, cotise et retrouve tes tours au même endroit.</p></div><div class="stack">' +
+          '<section class="welcome"><div class="cardbrand"><i></i>bokk</div><div class="crest" aria-hidden="true"><i></i></div><div><h1>Ton argent,<br>tes tontines.</h1><p>Rejoins ta réunion, cotise et retrouve tes tours au même endroit.</p></div><div class="stack">' +
           act("Créer mon compte", "enroll", "light") +
           act("Explorer avec Awa", "demo", "welcomelink") +
           "</div></section>"
@@ -3922,7 +4102,7 @@
             link("Retour à l’accueil", "home", "btn");
         main.innerHTML = content;
         document.title =
-          (main.querySelector("h1")?.textContent || "Mon espace") + " · Njangi";
+          (main.querySelector("h1")?.textContent || "Mon espace") + " · Bokk";
       }
       function voteAction(k, v) {
         if (!v || !groups[v.g].roster.includes(s.user) || v.status !== "open")
